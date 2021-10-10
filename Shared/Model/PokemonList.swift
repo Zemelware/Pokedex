@@ -8,7 +8,6 @@
 import Foundation
 
 struct Results: Codable {
-    let count: Int
     let results: [PokemonURL]
 }
 

@@ -11,8 +11,8 @@ class NetworkManager {
     
     static let shared = NetworkManager()
     
-    func pokemonResults() async throws -> Results {
-        let urlString = "https://pokeapi.co/api/v2/pokemon"
+    func pokemonResults() async throws -> [PokemonURL] {
+        let urlString = "https://pokeapi.co/api/v2/pokemon?limit=10000"
         guard let url = URL(string: urlString) else { throw NetworkError.invalidURL }
         
         let (data, response) = try await URLSession.shared.data(for: URLRequest(url: url))
@@ -21,7 +21,7 @@ class NetworkManager {
         
         guard let decodedData = try? JSONDecoder().decode(Results.self, from: data) else { throw NetworkError.invalidData }
         
-        return decodedData
+        return decodedData.results
     }
     
     func pokemon(url: String) async throws -> Pokemon {

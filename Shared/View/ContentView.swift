@@ -67,15 +67,14 @@ struct ContentView: View {
     var pokemonGrid: some View {
         VStack {
             if viewModel.searchResults(with: searchText, filterMegas: filteringMegas, filterGmaxes: filteringGmaxes).isEmpty {
-                VStack {
+                VStack(spacing: 8) {
                     Text("No Results")
                         .font(.title2)
                         .bold()
-                    Text("Try a new search or wait for the results to load.")
+                    Text("Wait for all the results to load then try a new search.")
                         .font(.body)
                         .foregroundColor(.secondary)
-//                    ProgressView(value: viewModel.loadedCount, total: Double(viewModel.pokemonResults.count))
-                    Text("\(viewModel.loadedCount)")
+                    ProgressView(value: viewModel.loadedCount, total: viewModel.totalCount)
                 }.frame(height: UIScreen.main.bounds.height/2)
             } else {
                 LazyVGrid(columns: columns, spacing: 10) {

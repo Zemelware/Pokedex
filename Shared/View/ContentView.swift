@@ -11,8 +11,9 @@ struct ContentView: View {
     @StateObject private var viewModel = ContentViewModel()
     
     @State private var searchText = ""
-    @State private var onlyMegas = false
-        
+    @State private var filteringMegas = false
+    @State private var filteringGmaxes = false
+    
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -64,14 +65,29 @@ struct ContentView: View {
     }
     
     var pokemonGrid: some View {
-        LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(viewModel.searchResults(with: searchText, showingOnlyMegas: onlyMegas)) { pokemon in
-                NavigationLink {
-                    PokemonView(pokemon: pokemon)
-                        .navigationBarTitleDisplayMode(.inline)
-                } label: {
-                    PokemonCard(pokemon: pokemon)
-                        .shadow(color: .black.opacity(0.2), radius: 7, x: 0, y: 4)
+        VStack {
+            if viewModel.searchResults(with: searchText, filterMegas: filteringMegas, filterGmaxes: filteringGmaxes).isEmpty {
+                VStack {
+                    Text("No Results")
+                        .font(.title2)
+                        .bold()
+                    Text("Try a new search or wait for the results to load.")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+//                    ProgressView(value: viewModel.loadedCount, total: Double(viewModel.pokemonResults.count))
+                    Text("\(viewModel.loadedCount)")
+                }.frame(height: UIScreen.main.bounds.height/2)
+            } else {
+                LazyVGrid(columns: columns, spacing: 10) {
+                    ForEach(viewModel.searchResults(with: searchText, filterMegas: filteringMegas, filterGmaxes: filteringGmaxes)) { pokemon in
+                        NavigationLink {
+                            PokemonView(pokemon: pokemon)
+                                .navigationBarTitleDisplayMode(.inline)
+                        } label: {
+                            PokemonCard(pokemon: pokemon)
+                                .shadow(color: .black.opacity(0.2), radius: 7, x: 0, y: 4)
+                        }
+                    }
                 }
             }
         }
@@ -79,8 +95,11 @@ struct ContentView: View {
     
     var filterButton: some View {
         Menu {
-            Button(action: { onlyMegas.toggle() }) {
-                Label("Show only Megas", systemImage: onlyMegas ? "checkmark" : "")
+            Button(action: { filteringMegas.toggle() }) {
+                Label("Filter Megas", systemImage: filteringMegas ? "checkmark" : "")
+            }
+            Button(action: { filteringGmaxes.toggle() }) {
+                Label("Filter G-Maxes", systemImage: filteringGmaxes ? "checkmark" : "")
             }
         } label: {
             Image(systemName: "line.3.horizontal.decrease")

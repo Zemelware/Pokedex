@@ -66,4 +66,7 @@ extension String {
     func removeDashesAndCapitalize() -> String {
         return self.replacingOccurrences(of: "-", with: " ").capitalized
     }
+    func formatGmax() -> String {
+        return self.replacingOccurrences(of: "Gmax", with: "G-Max")
+    }
 }
